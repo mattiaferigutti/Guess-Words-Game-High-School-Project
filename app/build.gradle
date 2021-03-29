@@ -17,6 +17,12 @@ android {
     }
 
     buildTypes {
+
+        //Add this parameter to enable data binding
+        buildFeatures {
+            dataBinding true
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

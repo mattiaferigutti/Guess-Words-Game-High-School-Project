@@ -7,36 +7,28 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.studio.mattiaferigutti.randomwords.databinding.ActivityMainBinding;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     //site from where to get random words https://randomwordgenerator.com/
-    private Button nextButton, previousButton;
-    private TextView wordText;
     private MainViewModel viewModel;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        //If a LiveData is in one of the binding expressions and no LifecycleOwner is set,
+        // the LiveData will not be observed and updates to it will not be propagated to the UI.
+        binding.setLifecycleOwner(this);
+        setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        nextButton = findViewById(R.id.nextButton);
-        previousButton = findViewById(R.id.previousButton);
-        wordText = findViewById(R.id.wordText);
-
-        //subscriber that observes every change
-        viewModel.getCurrentWord().observe(this, currentWord -> {
-            wordText.setText(currentWord);
-        });
-
-        nextButton.setOnClickListener( view -> {
-            viewModel.nextWord();
-        });
-
-        previousButton.setOnClickListener(view -> {
-            viewModel.previousWord();
-        });
+        binding.setViewModel(viewModel);
     }
 }
