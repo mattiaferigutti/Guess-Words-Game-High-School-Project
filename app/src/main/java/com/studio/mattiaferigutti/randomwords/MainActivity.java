@@ -1,12 +1,15 @@
 package com.studio.mattiaferigutti.randomwords;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView wordText;
     private List<String> words;
     private int index = 0;
+    private static final String SAVE_VALUE = "save_index";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
         wordText = findViewById(R.id.wordText);
 
         fillList();
+        if (savedInstanceState != null) {
+            index = savedInstanceState.getInt(SAVE_VALUE);
+        }
         wordText.setText(words.get(index));
 
         nextButton.setOnClickListener( view -> {
@@ -47,10 +54,24 @@ public class MainActivity extends AppCompatActivity {
         return words.get(index % words.size());
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(SAVE_VALUE, index);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        index = savedInstanceState.getInt(SAVE_VALUE);
+        wordText.setText(words.get(index));
+    }
+
     private void fillList() {
         //20 words
-        //You can also use Arrays.asList() to achieve the same result
-        words = createList(
+        words = Arrays.asList(
                 "stand",
                 "tank",
                 "food",
@@ -66,17 +87,5 @@ public class MainActivity extends AppCompatActivity {
                 "house",
                 "bed"
         );
-    }
-
-    // How does SafeVarargs work?
-    // https://stackoverflow.com/questions/14231037/java-safevarargs-annotation-does-a-standard-or-best-practice-exist
-    @SafeVarargs
-    private final <T> List<T> createList(T... listT) {
-        List<T> list = new ArrayList<>();
-        Collections.addAll(list, listT);
-//        for (T item : listT) {
-//            list.add(item);
-//        }
-        return list;
     }
 }
