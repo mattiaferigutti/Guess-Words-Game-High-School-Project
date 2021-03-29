@@ -1,6 +1,7 @@
 package com.studio.mattiaferigutti.randomwords;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.widget.Button;
@@ -25,33 +26,17 @@ public class MainActivity extends AppCompatActivity {
         previousButton = findViewById(R.id.previousButton);
         wordText = findViewById(R.id.wordText);
 
-        viewModel.fillList();
-        wordText.setText(viewModel.words.get(viewModel.index));
+        //subscriber that observes every change
+        viewModel.getCurrentWord().observe(this, currentWord -> {
+            wordText.setText(currentWord);
+        });
 
         nextButton.setOnClickListener( view -> {
-            wordText.setText(getNextItem());
+            viewModel.nextWord();
         });
 
         previousButton.setOnClickListener(view -> {
-            wordText.setText(getPreviousItem());
+            viewModel.previousWord();
         });
-    }
-
-    private String getNextItem() {
-        viewModel.index++;
-        return getWords().get(getIndex() % getWords().size());
-    }
-
-    private String getPreviousItem() {
-        if (getIndex() > 0) viewModel.index--;
-        return getWords().get(getIndex() % getWords().size());
-    }
-
-    private int getIndex() {
-        return viewModel.index;
-    }
-
-    private List<String> getWords() {
-        return viewModel.words;
     }
 }
