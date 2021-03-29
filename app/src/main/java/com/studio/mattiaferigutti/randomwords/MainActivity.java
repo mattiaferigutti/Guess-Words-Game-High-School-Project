@@ -1,82 +1,34 @@
 package com.studio.mattiaferigutti.randomwords;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.Collections;
+
+import com.studio.mattiaferigutti.randomwords.databinding.ActivityMainBinding;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     //site from where to get random words https://randomwordgenerator.com/
-    private Button nextButton, previousButton;
-    private TextView wordText;
-    private List<String> words;
-    private int index = 0;
+    private MainViewModel viewModel;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        nextButton = findViewById(R.id.nextButton);
-        previousButton = findViewById(R.id.previousButton);
-        wordText = findViewById(R.id.wordText);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        fillList();
-        wordText.setText(words.get(index));
+        //If a LiveData is in one of the binding expressions and no LifecycleOwner is set,
+        // the LiveData will not be observed and updates to it will not be propagated to the UI.
+        binding.setLifecycleOwner(this);
+        setContentView(binding.getRoot());
 
-        nextButton.setOnClickListener( view -> {
-            wordText.setText(getNextItem());
-        });
-
-        previousButton.setOnClickListener(view -> {
-            wordText.setText(getPreviousItem());
-        });
-    }
-
-    private String getNextItem() {
-        index++;
-        return words.get(index % words.size());
-    }
-
-    private String getPreviousItem() {
-        if (index > 0) index--;
-        return words.get(index % words.size());
-    }
-
-    private void fillList() {
-        //20 words
-        //You can also use Arrays.asList() to achieve the same result
-        words = createList(
-                "stand",
-                "tank",
-                "food",
-                "mirror",
-                "message",
-                "investment",
-                "dead",
-                "scandal",
-                "rock",
-                "resort",
-                "clown",
-                "employ",
-                "house",
-                "bed"
-        );
-    }
-
-    // How does SafeVarargs work?
-    // https://stackoverflow.com/questions/14231037/java-safevarargs-annotation-does-a-standard-or-best-practice-exist
-    @SafeVarargs
-    private final <T> List<T> createList(T... listT) {
-        List<T> list = new ArrayList<>();
-        Collections.addAll(list, listT);
-//        for (T item : listT) {
-//            list.add(item);
-//        }
-        return list;
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        binding.setViewModel(viewModel);
     }
 }
